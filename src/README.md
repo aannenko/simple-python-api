@@ -21,9 +21,9 @@ To run and debug this application, you will need:
 - [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client): Send HTTP requests directly from VS Code (useful for .http files).
 
 #### Prepare environment
-- Clone this repository using git and switch to the branch "1_flask" or simply download this branch as a zip
-- Open `src/` folder in Visual Studio Code
-- In VSCode press `Ctrl+Shift+P` and select:
+1. Clone this repository using git and switch to the branch "1_flask" or simply download this branch as a zip
+2. Open `src/` folder in Visual Studio Code
+3. In VSCode press `Ctrl+Shift+P` and select:
     1. "Python: Create Environment..."
     2. "Venv"
     3. Your Python installation
@@ -31,6 +31,12 @@ To run and debug this application, you will need:
 
 At this point you should have `.venv` created and dependencies from `requirements.txt` installed.
 
+What VSCode did for you is similar to the following sequence of commands:
+```powershell
+python -m venv .venv
+python -m pip install -r requirements.txt
+```
+
 #### Run the application
-In VSCode, press F5 to run the application.<br/>
+In VSCode press F5 to run the application.<br/>
 Open the file `app.http` and try sending requests from it to your app.

@@ -1,10 +1,12 @@
-# Stage 1: Flask
-This is the initial stage of development, it focuses on building a minimal [Flask Web API](https://flask.palletsprojects.com/en/stable/quickstart/). The goal here is to keep the codebase simple and highlight the basics of Flask.
+# Stage 2: SQLAlchemy and SQLite
+This is the second stage of development, focusing on integration of the existing [Flask Web API](https://flask.palletsprojects.com/en/stable/quickstart/) with [SQLAlchemy](https://docs.sqlalchemy.org/en/20/orm/quickstart.html) and [SQLite](https://sqlite.org/). The goal is to keep the codebase simple and showcase basic interaction with databases.
 
 ## Project Structure
-- `app.py`: Main entry point for the Flask application.
-- `Models/`: Contains data models (e.g., `sightseeing.py`, `sightseeing_page.py`).
-- `Services/`: Contains service logic (e.g., `sightseeing_service.py`).
+- `app.py`: Main entry point for the Flask application. Handles API routes and ensures the database is created and seeded on startup.
+- `Models/`: Contains data models (e.g., `sightseeing.py`). `sightseeing.py` is now a SQLAlchemy ORM model.
+- `DTO/`: Contains Data Transfer Objects (DTOs) used to define the structure of data returned or consumed by the API endpoints (e.g. `sightseeing_page.py`).
+- `Services/`: Contains service logic (e.g., `sightseeing_service.py`). All data access is now via SQLAlchemy and the database.
+- `Database/`: Contains database setup (`db.py`) and seeding logic (`seed.py`).
 - `app.http`: Example HTTP requests for testing the API.
 
 ## Getting started
@@ -36,6 +38,10 @@ What VSCode did for you is similar to the following sequence of commands:
 python -m venv .venv
 python -m pip install -r requirements.txt
 ```
+
+#### Database setup and seeding
+- The database is automatically created and seeded with initial sightseeing data when you start the app.
+- If you want to reseed or reset the database, you can run the seeding logic manually (see `Database/seed.py`).
 
 #### Run the application
 In VSCode press F5 to run the application.<br/>

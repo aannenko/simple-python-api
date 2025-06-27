@@ -23,7 +23,7 @@ To run and debug this application, you will need:
 - [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client): Send HTTP requests directly from VS Code (useful for .http files).
 
 #### Prepare environment
-1. Clone this repository using git and switch to the branch "1_flask" or simply download this branch as a zip
+1. Clone this repository using git and switch to the branch "2_sqlalchemy" or simply download this branch as a zip
 2. Open `src/` folder in Visual Studio Code
 3. In VSCode press `Ctrl+Shift+P` and select:
     1. "Python: Create Environment..."

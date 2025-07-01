@@ -1,14 +1,15 @@
+import inject
 from flask import Flask, jsonify, request
 
 from Database import db
+from DependencyInjection import di
 from DTO.sightseeing_page import SightseeingPage
 from Models.sightseeing import Sightseeing
 from Services.sightseeing_service import SightseeingsService
 
+inject.configure(di.configure_inject)
 db.create()
 db.seed()
-
-sightseeings_service = SightseeingsService()
 
 app = Flask(__name__)
 
@@ -22,6 +23,7 @@ def get_sightseeings():
     if take <= 0 or take > 100:
         return jsonify({"error": "take must be between 1 and 100"}), 400
 
+    sightseeings_service: SightseeingsService = inject.instance(SightseeingsService)
     sightseeings = sightseeings_service.get_sightseeings(skip, take)
     page = SightseeingPage(
         sightseeings,
@@ -42,6 +44,7 @@ def get_sightseeings():
 
 @app.get("/sightseeings/<int:id>")
 def get_sightseeing_by_id(id: int):
+    sightseeings_service: SightseeingsService = inject.instance(SightseeingsService)
     try:
         return jsonify(sightseeings_service.get_sightseeing_by_id(id).to_dict())
     except IndexError:
@@ -54,6 +57,7 @@ def add_sightseeing():
     if not data or "name" not in data or "location" not in data:
         return jsonify({"error": "Invalid data"}), 400
 
+    sightseeings_service: SightseeingsService = inject.instance(SightseeingsService)
     sightseeing = Sightseeing(data["name"], data["location"])
     id = sightseeings_service.add_sightseeing(sightseeing)
 
@@ -66,6 +70,7 @@ def update_sightseeing(id: int):
     if not data or "name" not in data or "location" not in data:
         return jsonify({"error": "Invalid data"}), 400
 
+    sightseeings_service: SightseeingsService = inject.instance(SightseeingsService)
     sightseeing = Sightseeing(data["name"], data["location"])
     if sightseeings_service.try_update_sightseeing(id, sightseeing):
         return "", 204
@@ -75,6 +80,7 @@ def update_sightseeing(id: int):
 
 @app.delete("/sightseeings/<int:id>")
 def delete_sightseeing(id: int):
+    sightseeings_service: SightseeingsService = inject.instance(SightseeingsService)
     if sightseeings_service.try_delete_sightseeing(id):
         return "", 204
     else:

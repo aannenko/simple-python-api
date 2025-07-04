@@ -7,3 +7,5 @@ This repository demonstrates step-by-step development of a Python web applicatio
 [2_database](../2_database/src): Add SQLAlchemy and SQLite DB support.
 
 [3_dependency_injection](../3_dependency_injection/src): Add Dependency Injection using Inject.
+
+[4_configuration](../3_configuration/src): Add application configuration using ConfigParser and register it in DI.

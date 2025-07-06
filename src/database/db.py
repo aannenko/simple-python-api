@@ -1,19 +1,28 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import inject
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from database.base import Base
 from models.sightseeing import Sightseeing
 
-DATABASE_URL = "sqlite:///sightseeings.db"
+DEFAULT_CONNECTION_STRING = "sqlite:///sightseeings.db"
 
-engine = create_engine(DATABASE_URL, echo=True, future=True)
-SessionFactory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def create_db_engine(connection_string: str = DEFAULT_CONNECTION_STRING) -> Engine:
+    return create_engine(connection_string, echo=True, future=True)
+
+
+def create_session_factory(engine: Engine) -> sessionmaker[Session]:
+    return sessionmaker(bind=engine, expire_on_commit=False)
+
 
 def create() -> None:
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=inject.instance(Engine))
+
 
 def seed() -> None:
-    with SessionFactory() as session:
+    session_factory = inject.instance(sessionmaker[Session])
+    with session_factory() as session:
         if session.query(Sightseeing).count() == 0:
             session.add_all([
                 Sightseeing("Statue of Liberty", "New York, NY"),

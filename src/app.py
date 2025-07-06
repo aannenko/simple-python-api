@@ -1,12 +1,16 @@
 from flask import Flask, jsonify, request
 
+from database import db
 from dto.sightseeing_page import SightseeingPage
 from models.sightseeing import Sightseeing
 from services.sightseeing_service import SightseeingsService
 
-app = Flask(__name__)
+db.create()
+db.seed()
 
 sightseeings_service = SightseeingsService()
+
+app = Flask(__name__)
 
 
 @app.get("/sightseeings")
@@ -39,7 +43,7 @@ def get_sightseeings():
 @app.get("/sightseeings/<int:id>")
 def get_sightseeing_by_id(id: int):
     try:
-        return jsonify(sightseeings_service.get_sightseeing_by_id(id).__dict__)
+        return jsonify(sightseeings_service.get_sightseeing_by_id(id).to_dict())
     except IndexError:
         return jsonify({"error": "Sightseeing not found"}), 404
 

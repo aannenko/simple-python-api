@@ -45,7 +45,7 @@ def get_sightseeings() -> tuple[Response, Literal[400]] | Response:
 
 def get_sightseeing_by_id(id: int) -> Response | tuple[Response, Literal[404]]:
     try:
-        return jsonify(sightseeing_service.get_sightseeing_by_id(id).__dict__)
+        return jsonify(sightseeing_service.get_sightseeing_by_id(id).to_dict())
     except IndexError:
         return jsonify({"error": "Sightseeing not found"}), 404
 

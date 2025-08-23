@@ -12,9 +12,9 @@ class SightseeingPage:
         self.previous_page = previous_page
         self.next_page = next_page
 
-    def to_dict(self) -> dict[str, list[dict[str, str]] | str]:
+    def to_dict(self) -> dict[str, list[dict[str, int | str]] | str]:
         return {
-            "sightseeings": [s.__dict__.copy() for s in self.sightseeings],
+            "sightseeings": [s.to_dict() for s in self.sightseeings],
             "previous_page": self.previous_page,
             "next_page": self.next_page,
         }

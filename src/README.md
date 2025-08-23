@@ -1,5 +1,5 @@
-# Stage 3: Dependency Injection using Inject
-This is the third stage of development, which integrates the [`inject`](https://github.com/ivankorobkov/python-inject) module into the existing solution that already contains Flask and SQLAlchemy code. The goal is to keep the codebase simple and showcase basic dependency injection concepts.
+# Stage 4: App configuration
+This is the fourth stage of development, which adds the usage of [`ConfigParser`](https://docs.python.org/3/library/configparser.html) and makes the application read its configuration from `config.ini` during startup. This stage also shows how well app configuration integrates with dependency injection. The goal is to keep the codebase simple and showcase basic app configuration concepts.
 
 ## Project Structure
 - `app.py`: Main entry point for the Flask application. Ensures that dependency injection is configured and the database is created and seeded on startup.
@@ -8,14 +8,15 @@ This is the third stage of development, which integrates the [`inject`](https://
 - `dto/`: Contains Data Transfer Objects (DTOs) used to define the structure of data returned or consumed by the API endpoints (e.g. `sightseeing_page.py`).
 - `services/`: Contains service logic (e.g., `sightseeing_service.py`). All data access is now via SQLAlchemy and the database. The `SightseeingService` class now accepts a `sessionmaker[Session]` parameter in its constructor, which is automatically provided by the dependency injection container when an instance of `SightseeingService` is created.
 - `database/`: Contains database setup and seeding logic (`db.py`).
-- `dependencyinjection/`: Contains the logic that registers services in a dependency injection container (`di.py`).
+- `configuration/`: Contains a simple `AppConfig` class which holds the application's configuration.
+- `dependencyinjection/`: Contains the logic that registers app configuration and services in a dependency injection container (`di.py`).
 - `app.http`: Example HTTP requests for testing the API.
 
-#### Dependency Injection notes
-- [`inject`](https://github.com/ivankorobkov/python-inject) is a dependency injection (DI) container, we use it to register our services and their dependencies, internally it builds a dependency graph of these services, e.g. it knows that to create a `SightseeingService` it needs a `sessionmaker[Session]`, which in turn needs SQLAlchemy's `Engine`.
-- `di.py` contains a method `configure_inject` which we call from `app.py` to register our services: first the `Engine`, then `sessionmaker[Session]`, and finally `SightseeingService`.
-- Then in the endpoint methods of `app.py` we create instances of `SightseeingService` by simply calling `inject.instance(SightseeingService)` — all dependencies are resolved automatically.
-- As the application grows, new services and their dependencies can be added to the DI container, keeping the codebase modular and maintainable.
+#### Application configuration notes
+- The application's configuration is managed by the `AppConfig` class, located in the `app_config` module.
+- When we create an instance of `AppConfig`, it reads configuration values from `config.ini` and stores them into its attributes. These values are then accessible throughout the application.
+- Additionally, we can set the environment variable `SIGHTSEEINGS_ENVIRONMENT`. When this variable is set, the `AppConfig` instance will store its value in the `self.environment` attribute and attempt to load additional configuration from the file `f"config.{self.environment}.ini"`. If this environment-specific file exists, its values will supplement or override those from the base `config.ini`.
+- In `di.py`, we create an instance of `AppConfig` and register it as a singleton in our dependency injection (DI) container. Then when we are configuring the database session with `sessionmaker(...)`, this singleton instance is resolved from the container, and its database connection string is passed to `sessionmaker(...)`.
 
 ## Getting started
 To run and debug this application, you will need:
@@ -31,7 +32,7 @@ To run and debug this application, you will need:
 - [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client): Send HTTP requests directly from VS Code (useful for .http files).
 
 #### Prepare environment
-1. Clone this repository using git and switch to the branch "3_dependency_injection" or simply download this branch as a zip
+1. Clone this repository using git and switch to the branch "4_configuration" or simply download this branch as a zip
 2. Open `src/` folder in Visual Studio Code
 3. In VSCode press `Ctrl+Shift+P` and select:
     1. "Python: Create Environment..."

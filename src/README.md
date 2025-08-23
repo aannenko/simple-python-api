@@ -1,5 +1,5 @@
-# Stage 4: App configuration
-This is the fourth stage of development, which adds the usage of [`ConfigParser`](https://docs.python.org/3/library/configparser.html) and makes the application read its configuration from `config.ini` during startup. This stage also shows how well app configuration integrates with dependency injection. The goal is to keep the codebase simple and showcase basic app configuration concepts.
+# Stage 5: Tests
+This is the fifth stage of development, which adds unit tests for services, models, dtos, and also integration tests for the whole API using [pytest](https://docs.pytest.org/en/stable). The goal is to keep the codebase simple and showcase basic unit testing concepts.
 
 ## Project Structure
 - `app.py`: Main entry point for the Flask application. Ensures that dependency injection is configured and the database is created and seeded on startup.
@@ -10,13 +10,16 @@ This is the fourth stage of development, which adds the usage of [`ConfigParser`
 - `database/`: Contains database setup and seeding logic (`db.py`).
 - `configuration/`: Contains a simple `AppConfig` class which holds the application's configuration.
 - `dependencyinjection/`: Contains the logic that registers app configuration and services in a dependency injection container (`di.py`).
+- `tests/`: Contains unit and integration tests covering services, models, DTOs and route handlers.
 - `app.http`: Example HTTP requests for testing the API.
 
-#### Application configuration notes
-- The application's configuration is managed by the `AppConfig` class, located in the `app_config` module.
-- When we create an instance of `AppConfig`, it reads configuration values from `config.ini` and stores them into its attributes. These values are then accessible throughout the application.
-- Additionally, we can set the environment variable `SIGHTSEEINGS_ENVIRONMENT`. When this variable is set, the `AppConfig` instance will store its value in the `self.environment` attribute and attempt to load additional configuration from the file `f"config.{self.environment}.ini"`. If this environment-specific file exists, its values will supplement or override those from the base `config.ini`.
-- In `di.py`, we create an instance of `AppConfig` and register it as a singleton in our dependency injection (DI) container. Then when we are configuring the database session with `sessionmaker(...)`, this singleton instance is resolved from the container, and its database connection string is passed to `sessionmaker(...)`.
+#### Unit test notes
+- Tests are organized per module in files named `test_{folder}_{module}.py` or `test_{folder}_{module}_{suffix}.py`.
+- After creating the virtual environment and installing dependencies, run tests from the terminal:
+  - `pytest tests` - full test suite
+  - `pytest tests/test_routes_sightseeing_routes.py` - single file
+  - `pytest tests/test_routes_sightseeing_routes.py::test_crud_happy_path` - single test
+- In VSCode open the Testing view (Ctrl+Shift+P → type "show testing" → select "View: Show Testing" or use the Testing sidebar) to run or debug individual tests.
 
 ## Getting started
 To run and debug this application, you will need:
@@ -32,7 +35,7 @@ To run and debug this application, you will need:
 - [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client): Send HTTP requests directly from VS Code (useful for .http files).
 
 #### Prepare environment
-1. Clone this repository using git and switch to the branch "4_configuration" or simply download this branch as a zip
+1. Clone this repository using git and switch to the branch "5_tests" or simply download this branch as a zip
 2. Open `src/` folder in Visual Studio Code
 3. In VSCode press `Ctrl+Shift+P` and select:
     1. "Python: Create Environment..."

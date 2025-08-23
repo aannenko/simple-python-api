@@ -9,3 +9,5 @@ This repository demonstrates step-by-step development of a Python web applicatio
 [3_dependency_injection](../3_dependency_injection/src): Add Dependency Injection using Inject. [What's changed.](../../compare/2_database...3_dependency_injection)
 
 [4_configuration](../4_configuration/src): Add application configuration using ConfigParser and register it in DI. [What's changed.](../../compare/3_dependency_injection...4_configuration)
+
+[5_tests](../5_tests): Add unit and integration tests. [What's changed.](../../compare/4_configuration...5_tests)

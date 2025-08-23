@@ -1,0 +1,28 @@
+@baseUrl = http://localhost:5000
+
+### Get all sightseeings
+GET {{baseUrl}}/sightseeings?skip=0&take=5
+
+### Get sightseeing by ID
+GET {{baseUrl}}/sightseeings/1
+
+### Add a new sightseeing
+POST {{baseUrl}}/sightseeings
+Content-Type: application/json
+
+{
+    "name": "Eiffel Tower",
+    "location": "Paris, France"
+}
+
+### Update a sightseeing
+PATCH {{baseUrl}}/sightseeings/12
+Content-Type: application/json
+
+{
+    "name": "Eiffel Tower 2",
+    "location": "Paris, France"
+}
+
+### Delete a sightseeing
+DELETE {{baseUrl}}/sightseeings/12

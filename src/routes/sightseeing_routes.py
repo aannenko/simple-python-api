@@ -1,12 +1,10 @@
 from typing import Literal
+import inject
 from flask import Flask, Response, jsonify, request
 
 from dto.sightseeing_page import SightseeingPage
 from models.sightseeing import Sightseeing
 from services.sightseeing_service import SightseeingService
-
-
-sightseeing_service = SightseeingService()
 
 
 def register(app: Flask) -> None:
@@ -25,7 +23,8 @@ def get_sightseeings() -> tuple[Response, Literal[400]] | Response:
     if take <= 0 or take > 100:
         return jsonify({"error": "take must be between 1 and 100"}), 400
 
-    sightseeings = sightseeing_service.get_sightseeings(skip, take)
+    sightseeings_service: SightseeingService = inject.instance(SightseeingService)
+    sightseeings = sightseeings_service.get_sightseeings(skip, take)
     page = SightseeingPage(
         sightseeings,
         (
@@ -44,37 +43,51 @@ def get_sightseeings() -> tuple[Response, Literal[400]] | Response:
 
 
 def get_sightseeing_by_id(id: int) -> Response | tuple[Response, Literal[404]]:
+    sightseeings_service: SightseeingService = inject.instance(SightseeingService)
     try:
-        return jsonify(sightseeing_service.get_sightseeing_by_id(id).to_dict())
+        return jsonify(sightseeings_service.get_sightseeing_by_id(id).to_dict())
     except IndexError:
         return jsonify({"error": "Sightseeing not found"}), 404
 
 
-def add_sightseeing() -> tuple[Response, Literal[400]] | tuple[Literal[''], Literal[201], dict[str, str]]:
+def add_sightseeing() -> (
+    tuple[Response, Literal[400]] | tuple[Literal[""], Literal[201], dict[str, str]]
+):
     data = request.json
     if not data or "name" not in data or "location" not in data:
         return jsonify({"error": "Invalid data"}), 400
 
+    sightseeings_service: SightseeingService = inject.instance(SightseeingService)
     sightseeing = Sightseeing(data["name"], data["location"])
-    id = sightseeing_service.add_sightseeing(sightseeing)
+    new_id = sightseeings_service.add_sightseeing(sightseeing)
 
-    return "", 201, {"Location": f"/sightseeings/{id}"}
+    return "", 201, {"Location": f"/sightseeings/{new_id}"}
 
 
-def update_sightseeing(id: int) -> tuple[Response, Literal[400]] | tuple[Literal[''], Literal[204]] | tuple[Response, Literal[404]]:
+def update_sightseeing(
+    id: int,
+) -> (
+    tuple[Response, Literal[400]]
+    | tuple[Literal[""], Literal[204]]
+    | tuple[Response, Literal[404]]
+):
     data = request.json
     if not data or "name" not in data or "location" not in data:
         return jsonify({"error": "Invalid data"}), 400
 
+    sightseeings_service: SightseeingService = inject.instance(SightseeingService)
     sightseeing = Sightseeing(data["name"], data["location"])
-    if sightseeing_service.try_update_sightseeing(id, sightseeing):
+    if sightseeings_service.try_update_sightseeing(id, sightseeing):
         return "", 204
     else:
         return jsonify({"error": "Sightseeing not found"}), 404
 
 
-def delete_sightseeing(id: int) -> tuple[Literal[''], Literal[204]] | tuple[Response, Literal[404]]:
-    if sightseeing_service.try_delete_sightseeing(id):
+def delete_sightseeing(
+    id: int,
+) -> tuple[Literal[""], Literal[204]] | tuple[Response, Literal[404]]:
+    sightseeings_service: SightseeingService = inject.instance(SightseeingService)
+    if sightseeings_service.try_delete_sightseeing(id):
         return "", 204
     else:
         return jsonify({"error": "Sightseeing not found"}), 404

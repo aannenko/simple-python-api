@@ -1,5 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import inject
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from database.base import Base
 from models.sightseeing import Sightseeing
@@ -7,16 +8,21 @@ from models.sightseeing import Sightseeing
 
 DEFAULT_CONNECTION_STRING = "sqlite:///sightseeings.db"
 
-engine = create_engine(DEFAULT_CONNECTION_STRING, echo=True, future=True)
-session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def create_db_engine(connection_string: str = DEFAULT_CONNECTION_STRING) -> Engine:
+    return create_engine(connection_string, echo=True, future=True)
+
+
+def create_session_factory(engine: Engine) -> sessionmaker[Session]:
+    return sessionmaker(bind=engine, expire_on_commit=False)
 
 
 def create() -> None:
     # Create DB
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=inject.instance(Engine))
 
     # Seed DB
-    with session_factory() as session:
+    with inject.instance(sessionmaker[Session])() as session:
         if session.query(Sightseeing).count() == 0:
             session.add_all(
                 [
